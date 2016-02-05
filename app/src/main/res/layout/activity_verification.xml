@@ -1,0 +1,112 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#FFFFFF">
+
+     <WebView
+         android:layout_width="match_parent"
+         android:layout_height="25dp"
+         android:id="@+id/stock_ticker"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LOGIN or REGISTER:"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:paddingLeft="5dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="5dp"
+            android:textSize="20dp"
+            android:background="#000000" />
+
+        <EditText
+            android:inputType="phone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:hint="Enter Mobile Number"
+            android:gravity="center"
+            android:id="@+id/user_mobile"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:textColor="#000000"
+            android:background="@drawable/edittext_background" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:hint="Enter Password"
+            android:gravity="center"
+            android:id="@+id/user_password"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:inputType="textPassword"
+            android:textColor="#000000"
+            android:background="@drawable/edittext_background" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Register"
+                android:textAllCaps="false"
+                android:id="@+id/register_button"
+                android:background="@drawable/button_states"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="2"
+                android:textColor="#000000" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:id="@+id/login_button"
+                android:background="@drawable/button_states"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="2"
+                android:textColor="#000000" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CNX NIFTY EOD:"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:paddingLeft="5dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:background="#000000" />
+
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/eod_chart"/>
+
+
+    </LinearLayout>
+</ScrollView>

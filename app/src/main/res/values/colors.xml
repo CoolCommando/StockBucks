@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="primary_material_dark">#ffffff</color>
+    <color name="primary_material_light">#ffffff</color>
+    <color name="primary_material_light_1">#ffffff</color>
+    <color name="primary_material_dark_1">#ffffff</color>
+    <color name="primary_material_light_2">#ffffff</color>
+    <color name="primary_material_light_3">#ffffff</color>
+
+    <drawable name="plain_green">#00b300</drawable>
+    <drawable name="plain_white">#FFFFFF</drawable>
+</resources>

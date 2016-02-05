@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">StockBucks</string>
+    <string name="title_activity_landing_page">Dashboard</string>
+</resources>
