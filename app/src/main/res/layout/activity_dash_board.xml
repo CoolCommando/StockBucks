@@ -23,7 +23,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Today's trade advice:"
+                        android:text="Notifications:"
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="5dp"
@@ -32,15 +32,23 @@
                         android:layout_marginTop="10dp"
                         android:textSize="20dp"/>
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:text="Nothing Yet!!!"
-                    android:textColor="#000000"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:textSize="20dp"
-                    android:id="@+id/trade_advice"/>
+                    android:layout_height="200dp"
+                    android:orientation="vertical">
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:textSize="20dp"
+                        android:id="@+id/trade_advice"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginBottom="5dp"
+                        />
+
+                </LinearLayout>
 
                 <Button
                     android:layout_width="match_parent"
@@ -54,27 +62,6 @@
                     android:background="@drawable/button_states"
                     android:textSize="20dp"
                     android:textColor="#000000" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="CNX NIFTY EOD:"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:paddingLeft="5dp"
-                        android:background="#000000"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="20dp"
-                        android:textSize="20dp"/>
-
-                    <WebView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:id="@+id/eod_chart_dashboard"/>
 
                 </LinearLayout>
            </ScrollView>

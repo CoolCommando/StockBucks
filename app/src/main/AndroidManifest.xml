@@ -1,87 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="imprika.stockbucks" >
+    package="imprika.stockbucks">
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <permission
         android:name="imprika.stockbucks.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="imprika.stockbucks.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/MyCustomAppTheme" >
+        android:theme="@style/MyCustomAppTheme">
         <activity
             android:name=".Verification"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"
-            >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".Subscription"
             android:label="Subscribe"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".DashBoard"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_landing_page" >
-        </activity>
-        <activity android:name=".Payments"
-            android:label="Payments">
-        </activity>
-        <activity android:name=".ProfileSettings"
-            android:label="Profile Settings">
-        </activity>
-        <activity android:name=".HowItWorks"
-            android:label="How it works?">
-        </activity>
-        <activity android:name=".Performance"
-            android:label="Performance">
-        </activity>
-        <activity android:name=".OrdersHistory"
-            android:label="Orders History">
-        </activity>
+            android:label="@string/title_activity_landing_page"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Payments"
+            android:label="Payments"></activity>
+        <activity
+            android:name=".ProfileSettings"
+            android:label="Profile Settings"></activity>
+        <activity
+            android:name=".HowItWorks"
+            android:label="How it works?"></activity>
+        <activity
+            android:name=".Performance"
+            android:label="Performance"></activity>
+        <activity
+            android:name=".OrdersHistory"
+            android:label="Orders History"></activity>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="imprika.stockbucks" />
             </intent-filter>
         </receiver>
 
         <service
             android:name=".GcmRegistrationService"
-            android:exported="false" >
-        </service>
+            android:exported="false"></service>
         <service
             android:name=".InstanceIDCheck"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
             android:name=".ListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
+
+        <activity android:name=".Zerodha"
+            android:label="Zerodha"
+            android:parentActivityName=".DashBoard">
+
+            <service
+                android:name=".NotificationsDeleter"
+                android:exported="false"></service>
+
+            <receiver android:name=".NotificationsDeletionScheduler">
+                <intent-filter>
+                    <action android:name="ModifyDatabase">
+                    </action>
+                </intent-filter>
+            </receiver>
+
+        </activity>
     </application>
 
 </manifest>

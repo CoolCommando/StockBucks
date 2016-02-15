@@ -1,8 +1,13 @@
 package imprika.stockbucks;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,11 +16,16 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class Verification extends AppCompatActivity implements View.OnClickListener{
 
     Button loginButton, registerButton;
     WebView stockTicker, eodChart;
+    PendingIntent pi;
+    private AlarmManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +70,22 @@ public class Verification extends AppCompatActivity implements View.OnClickListe
         eodChart.getSettings().setUseWideViewPort(true);
         eodChart.getSettings().setLoadWithOverviewMode(true);
         eodChart.loadUrl("http://chartfeed.icharts.in/ShowChart.php?chartkey=e01a8e64cbdba0bf2e6169879a55bf4e&symbol=NIFTY&pr_period=3M&uind1=EMA&uind1_param=5&uind2=BB&uind2_param=20,2&lind1=RSI&lind1_param=2&lind2=CCI&lind2_param=4&lind3=MACD&lind3_param=3,10,16%22%20border=%220%22%20alt=%22Nifty%20EOD%20Charts");
+
+        Intent i = new Intent("ModifyDatabase");
+        pi = PendingIntent.getBroadcast(this, 0, i, 0);
+        startAlarm();
     }
+
+    public void startAlarm() {
+
+        manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        int interval = 10000;
+
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, interval, pi);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_LONG).show();
+        Log.e("Success:", "Alarm Set!");
+    }
+
 
     @Override
     public void onClick(View v) {

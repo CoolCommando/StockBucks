@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -30,6 +31,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.iid.InstanceID;
 
+import java.util.LinkedList;
 import java.util.zip.Inflater;
 
 
@@ -37,30 +39,34 @@ public class DashBoard extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     static final String[]   NAVIGATION_ITEMS =new String[] {"Order Status", "Performance", "Payments", "How it works?", "Contact us", "Profile Settings", "Logout"};
-    ListView listView;
-    WebView stockTicker, eodChart, kitePublisher;
+    ListView listView, notifications;
+    WebView stockTicker;
     Button tradeButton;
-    View zerodhaView;
-    TextView tradeAdvice;
+    DatabaseHelper dbHelper;
+    LinkedList<String> ll= new LinkedList<>();
+    ArrayAdapter<String> notificationsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
 
-        tradeAdvice = (TextView) findViewById(R.id.trade_advice);
+        notifications = (ListView) findViewById(R.id.trade_advice);
+        notificationsAdapter = new ArrayAdapter<>(this, R.layout.custom_notifications_block, ll);
+
         LocalBroadcastManager.getInstance(this).registerReceiver(updateTextView, new IntentFilter("Update_TextView"));
 
-        SharedPreferences tradeAdvicePref = getSharedPreferences("Trade_Advice", this.MODE_PRIVATE);
         tradeButton= (Button) findViewById(R.id.trade_button);
-        tradeButton.setVisibility(View.INVISIBLE);
-        tradeButton.setEnabled(false);
 
-        if(tradeAdvicePref.getString("Today's_Advice", "Nothing Yet!!!") != "Nothing Yet!!!"){
-            tradeAdvice.setText(tradeAdvicePref.getString("Today's_Advice", "Nothing yet"));
-            tradeButton.setVisibility(View.VISIBLE);
-            tradeButton.setEnabled(true);
+        dbHelper = new DatabaseHelper(this);
+        Cursor res = dbHelper.getData();
+
+        if(res.getCount() != 0){
+            res.moveToLast();
+            do{
+                ll.add(res.getString(1));}while(res.moveToPrevious());
         }
+        notifications.setAdapter(notificationsAdapter);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
@@ -78,42 +84,38 @@ public class DashBoard extends AppCompatActivity {
         }
 
         listView= (ListView) findViewById(R.id.list_view);
-        ArrayAdapter<String> aAdapter= new ArrayAdapter<String>(this, R.layout.custom_listview, NAVIGATION_ITEMS);
+        ArrayAdapter<String> aAdapter= new ArrayAdapter<>(this, R.layout.custom_listview, NAVIGATION_ITEMS);
         listView.setAdapter(aAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+
                 switch (position) {
 
                     case 0:
                         startActivity(new Intent(getApplicationContext(), OrdersHistory.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 1:
                         startActivity(new Intent(getApplicationContext(), Performance.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 2:
                         startActivity(new Intent(getApplicationContext(), Payments.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 3:
                         startActivity(new Intent(getApplicationContext(), HowItWorks.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 4:
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 5:
                         startActivity(new Intent(getApplicationContext(), ProfileSettings.class));
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
                         break;
 
                     case 6:
@@ -122,22 +124,11 @@ public class DashBoard extends AppCompatActivity {
             }
         });
 
-        zerodhaView = View.inflate(DashBoard.this, R.layout.zerodha_login, null);
-        kitePublisher = (WebView) zerodhaView.findViewById(R.id.kite_publisher);
-        kitePublisher.getSettings().setJavaScriptEnabled(true);
-        kitePublisher.setHorizontalScrollBarEnabled(false);
-        kitePublisher.setVerticalScrollBarEnabled(false);
-        kitePublisher.setWebViewClient(new WebViewClient());
-        kitePublisher.loadUrl("https://kite.zerodha.com/");
-
-        final Dialog confirmTrade = new Dialog(this);
-        confirmTrade.setContentView(zerodhaView);
-
         tradeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (v.getId() == R.id.trade_button) {
-                    confirmTrade.show();
+                    startActivity(new Intent(DashBoard.this, Zerodha.class));
                 }
             }
         });
@@ -165,11 +156,6 @@ public class DashBoard extends AppCompatActivity {
                 stockTicker.setVisibility(View.VISIBLE);
             }
         });
-
-        eodChart = (WebView) findViewById(R.id.eod_chart_dashboard);
-        eodChart.getSettings().setUseWideViewPort(true);
-        eodChart.getSettings().setLoadWithOverviewMode(true);
-        eodChart.loadUrl("http://chartfeed.icharts.in/ShowChart.php?chartkey=e01a8e64cbdba0bf2e6169879a55bf4e&symbol=NIFTY&pr_period=3M&uind1=EMA&uind1_param=5&uind2=BB&uind2_param=20,2&lind1=RSI&lind1_param=2&lind2=CCI&lind2_param=4&lind3=MACD&lind3_param=3,10,16%22%20border=%220%22%20alt=%22Nifty%20EOD%20Charts");
     }
 
   @Override
@@ -265,9 +251,16 @@ public class DashBoard extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            tradeAdvice.setText(intent.getExtras().getString("message"));
-            tradeButton.setVisibility(View.VISIBLE);
-            tradeButton.setEnabled(true);
+            dbHelper = new DatabaseHelper(DashBoard.this);
+            Cursor res = dbHelper.getData();
+            ll.clear();
+
+            if(res.getCount() != 0){
+                res.moveToLast();
+                do{
+                    ll.add(res.getString(1));}while(res.moveToPrevious());
+            }
+            notificationsAdapter.notifyDataSetChanged();
         }
     };
     }
