@@ -4,10 +4,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -26,16 +23,23 @@ public class Verification extends AppCompatActivity implements View.OnClickListe
     WebView stockTicker, eodChart;
     PendingIntent pi;
     private AlarmManager manager;
+    Calendar cal;
+
+    // On create is used to initialize the class, and load the content- the xml file.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verification);
 
+        // Initialize action bar
+
         getSupportActionBar().setSubtitle("Bring Home Profits");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+
+        // Declaring components
 
         loginButton= (Button) findViewById(R.id.login_button);
         registerButton= (Button) findViewById(R.id.register_button);
@@ -73,17 +77,15 @@ public class Verification extends AppCompatActivity implements View.OnClickListe
 
         Intent i = new Intent("ModifyDatabase");
         pi = PendingIntent.getBroadcast(this, 0, i, 0);
-        startAlarm();
+        createAlarm();
     }
 
-    public void startAlarm() {
+    public void createAlarm() {
 
         manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int interval = 10000;
-
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000, interval, pi);
-        Toast.makeText(this, "Alarm Set", Toast.LENGTH_LONG).show();
-        Log.e("Success:", "Alarm Set!");
+        cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        manager.set(AlarmManager.RTC, cal.getTimeInMillis(), pi);
     }
 
 
@@ -102,9 +104,10 @@ public class Verification extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    // To load the menu.xml file in the overflow menu
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_verification_page, menu);
         return true;

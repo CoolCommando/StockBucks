@@ -1,7 +1,6 @@
 package imprika.stockbucks;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,25 +24,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.iid.InstanceID;
 
 import java.util.LinkedList;
-import java.util.zip.Inflater;
 
 
 public class DashBoard extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     static final String[]   NAVIGATION_ITEMS =new String[] {"Order Status", "Performance", "Payments", "How it works?", "Contact us", "Profile Settings", "Logout"};
-    ListView listView, notifications;
+    ListView listView, notificationsList;
     WebView stockTicker;
     Button tradeButton;
     DatabaseHelper dbHelper;
-    LinkedList<String> ll= new LinkedList<>();
+    LinkedList<String> listOfNotificationsFromDB = new LinkedList<>();
     ArrayAdapter<String> notificationsAdapter;
 
     @Override
@@ -51,37 +48,50 @@ public class DashBoard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
 
-        notifications = (ListView) findViewById(R.id.trade_advice);
-        notificationsAdapter = new ArrayAdapter<>(this, R.layout.custom_notifications_block, ll);
-
         LocalBroadcastManager.getInstance(this).registerReceiver(updateTextView, new IntentFilter("Update_TextView"));
-
         tradeButton= (Button) findViewById(R.id.trade_button);
 
-        dbHelper = new DatabaseHelper(this);
-        Cursor res = dbHelper.getData();
+        // Dynamically adding the notifications to the listview
 
-        if(res.getCount() != 0){
-            res.moveToLast();
-            do{
-                ll.add(res.getString(1));}while(res.moveToPrevious());
-        }
-        notifications.setAdapter(notificationsAdapter);
+        notificationsList = (ListView) findViewById(R.id.trade_advice);
+        notificationsAdapter = new ArrayAdapter<>(this, R.layout.custom_notifications_block, listOfNotificationsFromDB);
+
+        dbHelper = new DatabaseHelper(this);
+
+            Cursor res = dbHelper.getData();
+            if (res.getCount() != 0) {
+                res.moveToLast();
+                do {
+                    listOfNotificationsFromDB.add(res.getString(1));
+                } while (res.moveToPrevious());
+            }
+
+        notificationsList.setAdapter(notificationsAdapter);
+
+        // To display the menu icon in the action bar
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer);
 
+        // To close any open notifications,
+
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if(notificationManager != null){notificationManager.cancelAll();}
+
+        // To allow notifications
 
         SharedPreferences SharePre= getSharedPreferences("TokenCheck", this.MODE_PRIVATE);
         SharePre.edit().putBoolean("Subscribe", true).apply();
 
         mDrawerLayout= (DrawerLayout) findViewById(R.id.drawer_layout);
 
+        // Subscribe to receive messages if play services is installed
+
         if(checkPlayServices()){
             startService(new Intent(this, GcmRegistrationService.class));
         }
+
+        // Loading the navigation drawer items.
 
         listView= (ListView) findViewById(R.id.list_view);
         ArrayAdapter<String> aAdapter= new ArrayAdapter<>(this, R.layout.custom_listview, NAVIGATION_ITEMS);
@@ -253,12 +263,12 @@ public class DashBoard extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             dbHelper = new DatabaseHelper(DashBoard.this);
             Cursor res = dbHelper.getData();
-            ll.clear();
+            listOfNotificationsFromDB.clear();
 
             if(res.getCount() != 0){
                 res.moveToLast();
                 do{
-                    ll.add(res.getString(1));}while(res.moveToPrevious());
+                    listOfNotificationsFromDB.add(res.getString(1));}while(res.moveToPrevious());
             }
             notificationsAdapter.notifyDataSetChanged();
         }

@@ -62,7 +62,6 @@ public class ListenerService extends GcmListenerService {
                         Intent uiUpdate = new Intent("Update_TextView");
                         uiUpdate.putExtra("message", message);
                         LocalBroadcastManager.getInstance(this).sendBroadcast(uiUpdate);
-
                 }
         }
 }
